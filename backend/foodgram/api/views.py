@@ -56,15 +56,12 @@ class UserBaseViewSet(UserViewSet):
                 return Response({'detail': 'Вы уже подписаны!'},
                                 status=status.HTTP_400_BAD_REQUEST)
             Follow.objects.create(user=user, author=author)
-            serializer = FollowSerializer(author,
-                                          context={'request': request})
+            serializer = FollowSerializer(author, context={'request': request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if request.method == 'DELETE':
-            subscription = get_instance(Follow, user=user, author=author)
-            subscription.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        subscription = get_instance(Follow, user=user, author=author)
+        subscription.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -131,12 +128,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                                          RecipeFastSerializer,
                                                          Favorite, request)
 
-        if self.request.method == 'DELETE':
-            return self.delete_favorite_or_shopping_cart(user,
-                                                         recipe,
-                                                         Favorite)
-
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        instance = get_instance(Favorite, user=user, recipe=recipe)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True,
             methods=['post', 'delete'],
@@ -153,12 +147,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
                                                          RecipeFastSerializer,
                                                          ShoppingCart, request)
 
-        if self.request.method == 'DELETE':
-            return self.delete_favorite_or_shopping_cart(user,
-                                                         recipe,
-                                                         ShoppingCart)
-
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        instance = get_instance(ShoppingCart, user=user, recipe=recipe)
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['get'],
             permission_classes=(IsAuthenticated,))
