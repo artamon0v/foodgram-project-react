@@ -1,19 +1,12 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
 from rest_framework.response import Response
-
-from foodgram.settings import FILE_NAME
-
-from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                            ShoppingCart, Tag)
-from users.models import Follow, User
 
 from api.filters import NameSearchFilter, RecipeFilter
 from api.pagination import CustomPaginator
@@ -22,6 +15,10 @@ from api.serializers import (FollowSerializer, IngredientSerializer,
                              RecipeCreateSerializer, RecipeFastSerializer,
                              RecipeReadSerializer, TagSerializer,
                              UserBaseSerializer)
+from foodgram.settings import FILE_NAME
+from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
+                            ShoppingCart, Tag)
+from users.models import Follow, User
 
 
 class UserBaseViewSet(UserViewSet):

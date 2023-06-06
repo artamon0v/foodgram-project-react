@@ -1,5 +1,6 @@
 from django.contrib import admin
 from foodgram.settings import EMPTY_VALUE_DISPLAY
+
 from users.models import Follow, User
 
 
