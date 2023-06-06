@@ -1,11 +1,13 @@
 from django.db import transaction
+
 from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                            ShoppingCart, Tag)
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
+
+from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
+                            ShoppingCart, Tag)
 from users.models import Follow, User
 
 
@@ -132,6 +134,13 @@ class RecipeCreateSerializer(ModelSerializer):
         if any(ingredient['amount'] <= 0 for ingredient in ingredients):
             raise serializers.ValidationError(
                 'Количество должно быть больше 0.')
+
+        inrgedient_id_list = [item['id'] for item in attrs.get('ingredients')]
+        unique_ingredient_id_list = set(inrgedient_id_list)
+        if len(inrgedient_id_list) != len(unique_ingredient_id_list):
+            raise serializers.ValidationError(
+                'Ингредиенты должны быть уникальными.'
+            )
 
         return attrs
 
