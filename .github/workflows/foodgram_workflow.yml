@@ -63,7 +63,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            cd Dev/foodgram/infra
+            cd infra
             sudo docker-compose stop
             sudo docker system prune -af
             sudo docker-compose rm backend
