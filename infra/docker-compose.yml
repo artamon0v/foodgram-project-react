@@ -14,7 +14,7 @@ services:
     command: >
       sh -c "python manage.py collectstatic --no-input &&
                python manage.py migrate &&
-               python manage.py load_ingredients
+               python manage.py load_ingredients"
     restart: always
     volumes:
       - static_value:/app/static/
