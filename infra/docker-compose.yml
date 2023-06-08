@@ -7,7 +7,6 @@ services:
       - db_value:/var/lib/postgresql/data/
     env_file:
       - ./.env
-    restart: always
 
   backend:
     image: artamon0v/foodgram_backend:latest
