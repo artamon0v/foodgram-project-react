@@ -3,7 +3,7 @@ from djoser.serializers import UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField
 
 from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                             ShoppingCart, Tag)
@@ -64,7 +64,7 @@ class FollowSerializer(UserBaseSerializer):
 
 class IngredientInRecipeCreateSerializer(ModelSerializer):
     '''Сериализатор для отоброжения ингредиента при создании рецепта.'''
-    id = serializers.ReadOnlyField(source='ingredient.id')
+    id = PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit')
@@ -134,9 +134,12 @@ class RecipeCreateSerializer(ModelSerializer):
             raise serializers.ValidationError(
                 'Количество должно быть больше 0.')
 
-        inrgedient_id_list = [item['id'] for item in attrs.get('ingredients')]
-        unique_ingredient_id_list = set(inrgedient_id_list)
-        if len(inrgedient_id_list) != len(unique_ingredient_id_list):
+        ingredient_id_list = [item.get('id')
+                              for item in ingredients
+                              if item.get('id') is not None]
+        unique_ingredient_id_list = set(ingredient_id_list)
+
+        if len(ingredient_id_list) != len(unique_ingredient_id_list):
             raise serializers.ValidationError(
                 'Ингредиенты должны быть уникальными.'
             )
@@ -172,7 +175,7 @@ class RecipeCreateSerializer(ModelSerializer):
         for ingredient_data in ingredients_data:
             ingredient = IngredientInRecipe(
                 recipe=recipe,
-                ingredient_id=ingredient_data['id'],
+                ingredient_id=ingredient_data['id'].id,
                 amount=ingredient_data['amount']
             )
             ingredients.append(ingredient)
