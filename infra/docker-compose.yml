@@ -10,10 +10,6 @@ services:
 
   backend:
     image: artamon0v/foodgram_backend:latest
-    command: >
-      sh -c "python manage.py collectstatic --no-input &&
-               python manage.py migrate &&
-               python manage.py load_ingredients"
     restart: always
     volumes:
       - static_value:/app/static/
