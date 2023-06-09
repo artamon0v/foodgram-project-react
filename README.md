@@ -14,4 +14,3 @@ API REST
 Postman
 Djoser
 Docker
-upd
