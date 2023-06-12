@@ -51,9 +51,9 @@ class RecipeFastSerializer(ModelSerializer):
 
 class FollowSerializer(UserBaseSerializer):
     '''Сериализатор подписoк.'''
-    is_subscribed = serializers.BooleanField(default=True)
-    recipes = SerializerMethodField()
-    recipes_count = serializers.IntegerField()
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -65,12 +65,18 @@ class FollowSerializer(UserBaseSerializer):
 
     def get_recipes(self, obj):
         request = self.context.get('request')
-        limit = request.GET.get('recipes_limit')
-        recipes = obj.recipes.all()
-        if limit:
-            recipes = recipes[:int(limit)]
-        serializer = RecipeFastSerializer(recipes, many=True, read_only=True)
-        return serializer.data
+        recipes_limit = request.query_params.get('recipes_limit')
+        if not recipes_limit:
+            return RecipeFastSerializer(
+                Recipe.objects.filter(author=obj),
+                many=True,
+                context={'request': request}
+            ).data
+        return RecipeFastSerializer(
+            Recipe.objects.filter(author=obj)[:int(recipes_limit)],
+            many=True,
+            context={'request': request}
+        ).data
 
 
 class IngredientInRecipeCreateSerializer(ModelSerializer):
