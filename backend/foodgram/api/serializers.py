@@ -52,7 +52,7 @@ class RecipeFastSerializer(ModelSerializer):
 class FollowSerializer(UserBaseSerializer):
     '''Сериализатор подписoк.'''
     is_subscribed = serializers.BooleanField(default=True)
-    recipes = RecipeFastSerializer()
+    recipes = SerializerMethodField()
     recipes_count = serializers.IntegerField()
 
     class Meta:
